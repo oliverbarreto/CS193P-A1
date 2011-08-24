@@ -30,7 +30,8 @@
 
 
 //Basic Model Methods
-- (double)performOperation:(NSString *)operation;    //Basic Operations Management
+- (double)performOperation:(NSString *)operation;   //Basic Operations Management
+- (NSString *)pendingOperation;                     //Returns Operation display string   
 
 
 @end

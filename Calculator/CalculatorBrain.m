@@ -108,6 +108,17 @@
 }
 
 
+- (NSString *)pendingOperation {
+    if (waitingOperation == nil) {
+        return @"Op: ";
+    } else {
+        if ([self.waitingOperation isEqual:@"="]) {
+            return [NSString stringWithFormat:@"Op: = %g",waitingOperand];
+        } else    {
+            return [NSString stringWithFormat:@"Op: %g %@", waitingOperand, waitingOperation];
+        }
+    }
+}
 
 //* *****************************************************************************
 // Standard initialization of model

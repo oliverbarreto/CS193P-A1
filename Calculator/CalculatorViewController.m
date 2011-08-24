@@ -48,6 +48,63 @@
     [myAlert show];
 
     self.brain.errorMessage = @"";
+}
+
+
+- (void)updateUIDisplays:(UIButton *)mySender {
+    //Creates the right setup for Displaying content on all displays on screen
+    
+    //NSString *operation = mySender.titleLabel.text;
+    NSString *myOperationDisplayMSG = @"Op: ";
+    NSString static *myTypeOfAngleMetricsMSG = @"Rdn";
+
+    if (![self.brain.errorMessage isEqual:@""]) {
+        myOperationDisplayMSG = self.brain.errorMessage;
+        //[self showAlert];
+        self.brain.errorMessage = @"";
+    
+    } else {
+        if ([mySender.titleLabel.text isEqual:@"C"]) {
+            myOperationDisplayMSG = @"Op: ";
+            
+            //Test of Error Conditions of Model calling AlertView
+        } else if ([mySender.titleLabel.text isEqual:@"f"]) {
+            [self showAlert];
+            
+        } else if ([mySender.titleLabel.text isEqual:@"Deg"] || [mySender.titleLabel.text isEqual:@"Rdn"] ) {
+            
+            //Change image & text of Deg/Rdn Button & Display Text;  
+            if (stateForTypeOfAngleMetrics) {                       //Radians
+                myTypeOfAngleMetricsMSG = [NSString stringWithFormat:@"Rdn"];
+                stateForTypeOfAngleMetrics = NO;
+                
+                [stateForTypeOfAngleMetricsButton setTitle:@"Deg" forState:UIControlStateNormal];
+                UIImage *myButtonImage = [UIImage imageNamed:@"LightGreyR.png"];
+                [stateForTypeOfAngleMetricsButton setBackgroundImage:myButtonImage forState:UIControlStateNormal];
+                
+            } else {                                                //Degrees
+                myTypeOfAngleMetricsMSG = [NSString stringWithFormat:@"Deg"];
+                stateForTypeOfAngleMetrics = YES;                
+                
+                [stateForTypeOfAngleMetricsButton setTitle:@"Rdn" forState:UIControlStateNormal];
+                UIImage *myButtonImage = [UIImage imageNamed:@"DarkGreyR.png"];
+                [stateForTypeOfAngleMetricsButton setBackgroundImage:myButtonImage forState:UIControlStateNormal];
+            }   
+        } else {
+            if (self.brain.waitingOperand) {
+                myOperationDisplayMSG = [self.brain pendingOperation];
+            } else {
+                myOperationDisplayMSG = [NSString stringWithFormat:@"Op: "];
+            }            
+        }
+    }
+
+    
+    //Dsisplays updated content for all the Diplays
+    self.display.text = [NSString stringWithFormat:@"%g", self.brain.operand];
+    self.displayMem.text = [NSString stringWithFormat:@"Mem: %g", self.brain.myMem];
+    self.displayTypeOfAngleMetrics.text = myTypeOfAngleMetricsMSG;
+    self.displayOperation.text = myOperationDisplayMSG;
 
 }
 
@@ -58,83 +115,29 @@
     if (userIsInTheMiddleOfTyingANumber) {
         if ([digit isEqual:@"."]) {
             if ([self isDecimalPointValid]) {
-                display.text = [display.text stringByAppendingString:digit];
+                self.display.text = [self.display.text stringByAppendingString:digit];
             }
         } else {   
-            display.text = [display.text stringByAppendingString:digit];
+            self.display.text = [self.display.text stringByAppendingString:digit];
         }
     } else {      
-        display.text = digit;
+        self.display.text = digit;
         userIsInTheMiddleOfTyingANumber = YES;
     }
 }
 
-- (void)updateUIDisplays:(UIButton *)mySender {
-    //Creates the right setup for Displaying content on all displays on screen
-    
-    //NSString *operation = mySender.titleLabel.text;
-    NSString *myOperationDisplayMSG = @"Op: ";
-    NSString static *myTypeOfAngleMetricsMSG = @"Deg";
-
-    if ([mySender.titleLabel.text isEqual:@"C"]) {
-        myOperationDisplayMSG = @"Op: ";
-        
-    //Prueba de alerta
-    } else if ([mySender.titleLabel.text isEqual:@"f"]) {
-        [self showAlert];
-        
-    } else if ([mySender.titleLabel.text isEqual:@"Deg"] || [mySender.titleLabel.text isEqual:@"Rdn"] ) {
-
-        //Change image & text of Deg/Rdn Button & Display Text;  
-        if (stateForTypeOfAngleMetrics){                        //Radians
-            myTypeOfAngleMetricsMSG = [NSString stringWithFormat:@"Rdn"];
-            stateForTypeOfAngleMetrics = NO;
-            [stateForTypeOfAngleMetricsButton setTitle:@"Deg" forState:UIControlStateNormal];
-            UIImage *myButtonImage = [UIImage imageNamed:@"LightGreyR.png"];
-            [stateForTypeOfAngleMetricsButton setBackgroundImage:myButtonImage forState:UIControlStateNormal];
-        
-        } else {                                                //Degrees
-            myTypeOfAngleMetricsMSG = [NSString stringWithFormat:@"Deg"];
-            stateForTypeOfAngleMetrics = YES;                
-            [stateForTypeOfAngleMetricsButton setTitle:@"Rdn" forState:UIControlStateNormal];
-            UIImage *myButtonImage = [UIImage imageNamed:@"DarkGreyR.png"];
-            [stateForTypeOfAngleMetricsButton setBackgroundImage:myButtonImage forState:UIControlStateNormal];
-        }   
-        
-    } else if ([mySender.titleLabel.text isEqual:@"="]) {
-        //myOperationDisplayMSG = [NSString stringWithFormat:@"Op: = %d", self.brain.operand];
-        
-    } else {
-        //myOperationDisplayMSG = [NSString stringWithFormat:@"Op: %d %@ %@",                                 self.brain.waitingOperand, self.brain.waitingOperation, self.display.text];
-        
-    }
-    
-    //displays updated content for the Memory Diplay
-    self.display.text = [NSString stringWithFormat:@"%g", self.brain.operand];
-    self.displayMem.text = [NSString stringWithFormat:@"Mem: %g", self.brain.myMem];
-    self.displayTypeOfAngleMetrics.text = myTypeOfAngleMetricsMSG;
-    //self.displayOperation.text =  myOperationDisplayMSG;
-    
-    if (![self.brain.errorMessage isEqual:@""]) {
-    //if (self.brain.errorMessage) {
-        //self.displayOperation.text = self.brain.errorMessage;
-        [self showAlert];
-        //self.brain.errorMessage = nil;
-    }
-
-}
 
 - (IBAction)operationPressed:(UIButton *)sender {
     //Performs actions when an Operation is pressed    
     //checks if the user is in the middle of typing some number or its an final result from an operations or equals is pressed
 
     if (userIsInTheMiddleOfTyingANumber) {
-        self.brain.operand = [display.text doubleValue];
+        self.brain.operand = [self.display.text doubleValue];
         userIsInTheMiddleOfTyingANumber = NO;
     }
     
     self.brain.operand = [self.brain performOperation:sender.titleLabel.text];
-    
+        
     //Update Displays in UI
     [self updateUIDisplays:sender];
 }
