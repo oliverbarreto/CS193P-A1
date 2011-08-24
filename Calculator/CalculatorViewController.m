@@ -37,6 +37,20 @@
     else return NO;
 }
 
+- (void)showAlert {
+    UIAlertView *myAlert = [[UIAlertView alloc] initWithTitle:@"Invalid Operation" 
+                                                      message:self.brain.errorMessage 
+                                                     delegate:self 
+                                            cancelButtonTitle:@"OK" 
+                                            otherButtonTitles:nil];
+
+    [myAlert autorelease];
+    [myAlert show];
+
+    self.brain.errorMessage = @"";
+
+}
+
 - (IBAction)digitPressed:(UIButton *)sender {
     //Performs actions when a Digit (number) is pressed
     NSString *digit = sender.titleLabel.text;
@@ -56,24 +70,30 @@
 }
 
 - (void)updateUIDisplays:(UIButton *)mySender {
+    //Creates the right setup for Displaying content on all displays on screen
     
     //NSString *operation = mySender.titleLabel.text;
     NSString *myOperationDisplayMSG = @"Op: ";
     NSString static *myTypeOfAngleMetricsMSG = @"Deg";
 
-    //Checks for Operation Display content
     if ([mySender.titleLabel.text isEqual:@"C"]) {
         myOperationDisplayMSG = @"Op: ";
         
+    //Prueba de alerta
+    } else if ([mySender.titleLabel.text isEqual:@"f"]) {
+        [self showAlert];
+        
     } else if ([mySender.titleLabel.text isEqual:@"Deg"] || [mySender.titleLabel.text isEqual:@"Rdn"] ) {
-        if (stateForTypeOfAngleMetrics){
+
+        //Change image & text of Deg/Rdn Button & Display Text;  
+        if (stateForTypeOfAngleMetrics){                        //Radians
             myTypeOfAngleMetricsMSG = [NSString stringWithFormat:@"Rdn"];
             stateForTypeOfAngleMetrics = NO;
             [stateForTypeOfAngleMetricsButton setTitle:@"Deg" forState:UIControlStateNormal];
             UIImage *myButtonImage = [UIImage imageNamed:@"LightGreyR.png"];
             [stateForTypeOfAngleMetricsButton setBackgroundImage:myButtonImage forState:UIControlStateNormal];
-            
-        } else {
+        
+        } else {                                                //Degrees
             myTypeOfAngleMetricsMSG = [NSString stringWithFormat:@"Deg"];
             stateForTypeOfAngleMetrics = YES;                
             [stateForTypeOfAngleMetricsButton setTitle:@"Rdn" forState:UIControlStateNormal];
@@ -94,15 +114,14 @@
     self.displayMem.text = [NSString stringWithFormat:@"Mem: %g", self.brain.myMem];
     self.displayTypeOfAngleMetrics.text = myTypeOfAngleMetricsMSG;
     //self.displayOperation.text =  myOperationDisplayMSG;
-
-/*
+    
     if (![self.brain.errorMessage isEqual:@""]) {
-        self.displayOperation.text = self.brain.errorMessage;
-    } else {
-        
-        
+    //if (self.brain.errorMessage) {
+        //self.displayOperation.text = self.brain.errorMessage;
+        [self showAlert];
+        //self.brain.errorMessage = nil;
     }
-*/
+
 }
 
 - (IBAction)operationPressed:(UIButton *)sender {

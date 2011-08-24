@@ -17,7 +17,7 @@
     double waitingOperand;          //to keep track of waiting operation when you try 
     NSString *waitingOperation;     //to do something like "2 + 3 * 5 ="
     
-    //NSString *errorMessage;          //Sends Warning & Error Messages to ViewController
+    NSString *errorMessage;          //Sends Warning & Error Messages to ViewController
 
     BOOL typeOfAngleMetrics;        //FALSE=Degrees;TRUE=Radians
 }
@@ -26,7 +26,7 @@
 @property double operand, myMem, waitingOperand;
 @property (nonatomic, retain) NSString *waitingOperation;
 @property BOOL typeOfAngleMetrics;
-//@property (nonatomic, retain) NSString *errorMessage;
+@property (nonatomic, retain) NSString *errorMessage;
 
 
 //Basic Model Methods
